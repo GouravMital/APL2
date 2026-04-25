@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model UserProfile {
+  id            String   @id @default(cuid())
+  name          String   @default("Friend")
+  wellnessGoals String   @default("general well-being")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model MoodEntry {
+  id        String   @id @default(cuid())
+  mood      Int      
+  emoji     String   @default("😊")
+  note      String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  title     String   
+  content   String   
+  tags      String   @default("")
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HydrationLog {
+  id        String   @id @default(cuid())
+  glasses   Int      @default(0)
+  goal      Int      @default(8)
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Habit {
+  id        String   @id @default(cuid())
+  name      String   
+  icon      String   @default("✨")
+  color     String   @default("#7C9A82")
+  frequency String   @default("daily")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  logs      HabitLog[]
+}
+
+model HabitLog {
+  id         String   @id @default(cuid())
+  habitId    String   
+  completed  Boolean  @default(false)
+  date       DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  habit      Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+}
+
+model SleepLog {
+  id        String   @id @default(cuid())
+  hours     Float    @default(0)
+  quality   Int      @default(3)
+  bedtime   String?
+  wakeTime  String?
+  note      String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MeditationSession {
+  id        String   @id @default(cuid())
+  duration  Int      @default(5)
+  type      String   @default("mindfulness")
+  note      String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  role      String   
+  content   String   
+  context   String?
+  createdAt DateTime @default(now())
+}
